@@ -22,7 +22,7 @@ export default class PhotosAPIServise {
   async fetchPhotos() {
     try {
       const response = await axios.get(
-        `${this.BASE_URL}?key=${this.KEY}&q=${this.searchQuery}&orientation=horizontal&image_type=photo&safesearch=true&page=${this.page}&per_page=4`
+        `${this.BASE_URL}?key=${this.KEY}&q=${this.searchQuery}&orientation=horizontal&image_type=photo&safesearch=true&page=${this.page}&per_page=40`
       );
       const data = await JSON.parse(response.request.response);
       return data;

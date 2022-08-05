@@ -1,7 +1,9 @@
 import './css/styles.css';
-import { Notify } from 'notiflix';
 import PhotosAPIServise from './fetchPhotos';
-// import simpleLightbox from 'simplelightbox';
+import { Notify } from 'notiflix';
+// import SimpleLightbox from 'simplelightbox';
+import SimpleLightbox from 'simplelightbox/dist/simple-lightbox.esm';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -13,6 +15,7 @@ const photosAPIServise = new PhotosAPIServise();
 
 const submitHandler = e => {
   e.preventDefault();
+  removeLoadMoreBtn();
   refs.div.innerHTML = '';
   photosAPIServise.searchQuery = e.target.elements.searchQuery.value.trim();
 
@@ -26,11 +29,13 @@ const submitHandler = e => {
           'Sorry, there are no images matching your search query. Please try again.'
         );
       } else {
+        Notify.success(`Hooray! We found ${data.totalHits} images.`);
         const markup = createGalleryMarkup(data.hits);
         renderGallery(markup);
       }
     });
   }
+  setTimeout(addLoadMoreBtn, 500);
 };
 
 const moreBtnClickHandler = e => {
@@ -46,9 +51,9 @@ const createGalleryMarkup = data => {
   return data
     .map(
       item =>
-        `<div class="photo-card">
-    <a href="${item.largeImageURL}">
-    <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" /></a>
+        `<a href="${item.largeImageURL}">
+    <div class="photo-card">
+      <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" />
     <div class="info">
     <p class="info-item">${item.likes}
       <b>Likes</b>
@@ -63,7 +68,8 @@ const createGalleryMarkup = data => {
       <b>Downloads</b>
     </p>
   </div>
-</div>`
+</div>
+</a>`
     )
     .join('');
 };
@@ -72,5 +78,23 @@ const renderGallery = markup => {
   refs.div.insertAdjacentHTML('beforeend', markup);
 };
 
+const addLoadMoreBtn = () => {
+  refs.moreBtn.classList.remove('is-visible');
+};
+
+const removeLoadMoreBtn = () => {
+  refs.moreBtn.classList.add('is-visible');
+};
+
 refs.form.addEventListener('submit', submitHandler);
 refs.moreBtn.addEventListener('click', moreBtnClickHandler);
+
+// let gallery = new SimpleLightbox('.gallery a');
+// gallery.on('show.simplelightbox', function () {
+//   console.log('ok');
+// });
+
+new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
