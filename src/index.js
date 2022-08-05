@@ -1,4 +1,7 @@
 import './css/styles.css';
+import { Notify } from 'notiflix';
+import PhotosAPIServise from './fetchPhotos';
+// import simpleLightbox from 'simplelightbox';
 
 const refs = {
   form: document.querySelector('.search-form'),
@@ -6,17 +9,39 @@ const refs = {
   moreBtn: document.querySelector('.load-more'),
 };
 
+const photosAPIServise = new PhotosAPIServise();
+
 const submitHandler = e => {
   e.preventDefault();
-  let inputValue = e.target.elements[0].value.trim();
-  fetchPhotos(inputValue).then(data => {
-    console.log(data.hits);
+  refs.div.innerHTML = '';
+  photosAPIServise.searchQuery = e.target.elements.searchQuery.value.trim();
+
+  if (photosAPIServise.searchQuery.length === 0) {
+    Notify.failure('Please, enter some text');
+  } else {
+    photosAPIServise.resetPage();
+    photosAPIServise.fetchPhotos().then(data => {
+      if (data.hits.length === 0) {
+        Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      } else {
+        const markup = createGalleryMarkup(data.hits);
+        renderGallery(markup);
+      }
+    });
+  }
+};
+
+const moreBtnClickHandler = e => {
+  e.preventDefault();
+  photosAPIServise.incrementPage();
+  photosAPIServise.fetchPhotos().then(data => {
     const markup = createGalleryMarkup(data.hits);
     renderGallery(markup);
   });
 };
-
-refs.form.addEventListener('submit', submitHandler);
+refs.moreBtn.addEventListener('click', moreBtnClickHandler);
 
 const createGalleryMarkup = data => {
   return data
@@ -45,19 +70,19 @@ const createGalleryMarkup = data => {
 };
 
 const renderGallery = markup => {
-  refs.div.innerHTML = markup;
+  // refs.div.innerHTML = markup;
+  refs.div.insertAdjacentHTML('beforeend', markup);
 };
 
-const BASE_URL = 'https://pixabay.com/api/';
-const KEY = '24752012-6c87264ae8b83647fd23322b3';
+// function fetchPhotos(value) {
+//   return fetch(
+//     `${BASE_URL}?key=${KEY}&q=${value}&orientation=horizontal&image_type=photo&safesearch=true&page=${page}&per_page=4`
+//   ).then(response => {
+//     if (!response.ok) {
+//       throw new Error(response.status);
+//     }
+//     return response.json();
+//   });
+// }
 
-function fetchPhotos(value) {
-  return fetch(
-    `${BASE_URL}?key=${KEY}&q=${value}&orientation=horizontal&image_type=photo&safesearch=true`
-  ).then(response => {
-    if (!response.ok) {
-      throw new Error(response.status);
-    }
-    return response.json();
-  });
-}
+refs.form.addEventListener('submit', submitHandler);
