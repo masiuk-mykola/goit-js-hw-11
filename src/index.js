@@ -35,6 +35,16 @@ const submitHandler = e => {
     });
   }
   setTimeout(addLoadMoreBtn, 500);
+  setTimeout(function () {
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }, 500);
 };
 
 let gallery;
@@ -56,15 +66,26 @@ const moreBtnClickHandler = e => {
     renderGallery(markup);
   });
   gallery.refresh();
+  setTimeout(function () {
+    const { height: cardHeight } = document
+      .querySelector('.gallery')
+      .firstElementChild.getBoundingClientRect();
+
+    window.scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+  }, 500);
 };
 
 const createGalleryMarkup = data => {
   return data
     .map(
       item =>
-        `<a href="${item.largeImageURL}">
+        `
     <div class="photo-card">
-      <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" />
+    <a href="${item.largeImageURL}">
+      <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" /></a>
     <div class="info">
     <p class="info-item">${item.likes}
       <b>Likes</b>
@@ -80,7 +101,7 @@ const createGalleryMarkup = data => {
     </p>
   </div>
 </div>
-</a>`
+`
     )
     .join('');
 };
