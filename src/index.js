@@ -1,8 +1,7 @@
 import './css/styles.css';
 import PhotosAPIServise from './fetchPhotos';
 import { Notify } from 'notiflix';
-// import SimpleLightbox from 'simplelightbox';
-import SimpleLightbox from 'simplelightbox/dist/simple-lightbox.esm';
+import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const refs = {
@@ -38,6 +37,17 @@ const submitHandler = e => {
   setTimeout(addLoadMoreBtn, 500);
 };
 
+let gallery;
+
+const renderGallery = markup => {
+  refs.div.insertAdjacentHTML('beforeend', markup);
+
+  gallery = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
+};
+
 const moreBtnClickHandler = e => {
   e.preventDefault();
   photosAPIServise.incrementPage();
@@ -45,6 +55,7 @@ const moreBtnClickHandler = e => {
     const markup = createGalleryMarkup(data.hits);
     renderGallery(markup);
   });
+  gallery.refresh();
 };
 
 const createGalleryMarkup = data => {
@@ -74,10 +85,6 @@ const createGalleryMarkup = data => {
     .join('');
 };
 
-const renderGallery = markup => {
-  refs.div.insertAdjacentHTML('beforeend', markup);
-};
-
 const addLoadMoreBtn = () => {
   refs.moreBtn.classList.remove('is-visible');
 };
@@ -88,13 +95,3 @@ const removeLoadMoreBtn = () => {
 
 refs.form.addEventListener('submit', submitHandler);
 refs.moreBtn.addEventListener('click', moreBtnClickHandler);
-
-// let gallery = new SimpleLightbox('.gallery a');
-// gallery.on('show.simplelightbox', function () {
-//   console.log('ok');
-// });
-
-new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-});
