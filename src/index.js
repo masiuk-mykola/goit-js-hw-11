@@ -41,7 +41,6 @@ const moreBtnClickHandler = e => {
     renderGallery(markup);
   });
 };
-refs.moreBtn.addEventListener('click', moreBtnClickHandler);
 
 const createGalleryMarkup = data => {
   return data
@@ -70,19 +69,8 @@ const createGalleryMarkup = data => {
 };
 
 const renderGallery = markup => {
-  // refs.div.innerHTML = markup;
   refs.div.insertAdjacentHTML('beforeend', markup);
 };
 
-// function fetchPhotos(value) {
-//   return fetch(
-//     `${BASE_URL}?key=${KEY}&q=${value}&orientation=horizontal&image_type=photo&safesearch=true&page=${page}&per_page=4`
-//   ).then(response => {
-//     if (!response.ok) {
-//       throw new Error(response.status);
-//     }
-//     return response.json();
-//   });
-// }
-
 refs.form.addEventListener('submit', submitHandler);
+refs.moreBtn.addEventListener('click', moreBtnClickHandler);
