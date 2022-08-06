@@ -48,6 +48,9 @@ const submitHandler = e => {
 };
 
 let gallery;
+let height;
+let scrollTop;
+let scrollHeight;
 
 const renderGallery = markup => {
   refs.div.insertAdjacentHTML('beforeend', markup);
@@ -56,6 +59,9 @@ const renderGallery = markup => {
     captionsData: 'alt',
     captionDelay: 250,
   });
+  height = refs.div.clientHeight;
+  scrollTop = refs.div.scrollTop;
+  scrollHeight = refs.div.scrollHeight;
 };
 
 const moreBtnClickHandler = e => {
@@ -64,6 +70,12 @@ const moreBtnClickHandler = e => {
   photosAPIServise.fetchPhotos().then(data => {
     const markup = createGalleryMarkup(data.hits);
     renderGallery(markup);
+    let currentPage = photosAPIServise.pageNumber;
+    if (currentPage * 40 >= data.totalHits) {
+      Notify.warning(
+        `We're sorry, but you've reached the end of search results.`
+      );
+    }
   });
   gallery.refresh();
   setTimeout(function () {
@@ -114,5 +126,31 @@ const removeLoadMoreBtn = () => {
   refs.moreBtn.classList.add('is-visible');
 };
 
+const scrollBottomHandler = e => {
+  e.preventDefault();
+  if (
+    window.scrollY + 1 >=
+    document.documentElement.scrollHeight -
+      document.documentElement.clientHeight
+  ) {
+    photosAPIServise.incrementPage();
+    photosAPIServise.fetchPhotos().then(data => {
+      const markup = createGalleryMarkup(data.hits);
+      renderGallery(markup);
+    });
+    gallery.refresh();
+    setTimeout(function () {
+      const { height: cardHeight } = document
+        .querySelector('.gallery')
+        .firstElementChild.getBoundingClientRect();
+      window.scrollBy({
+        top: cardHeight * 2,
+        behavior: 'smooth',
+      });
+    }, 500);
+  }
+};
+
 refs.form.addEventListener('submit', submitHandler);
 refs.moreBtn.addEventListener('click', moreBtnClickHandler);
+window.addEventListener('scroll', scrollBottomHandler);

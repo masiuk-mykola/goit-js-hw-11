@@ -46,4 +46,12 @@ export default class PhotosAPIServise {
   set query(newQuery) {
     this.searchQuery = newQuery;
   }
+
+  get pageNumber() {
+    return this.page;
+  }
+
+  set pageNumber(newPage) {
+    this.page = newPage;
+  }
 }
