@@ -8,13 +8,23 @@
   </head>
   <body>
     <form class="search-form" id="search-form">
-      <input
+      <!-- <input
         type="text"
         name="searchQuery"
         autocomplete="off"
         placeholder="Search images..."
       />
-      <button type="submit">Search</button>
+      <button type="submit"></button> -->
+      <label for="search">Search</label>
+      <input
+        id="search"
+        type="text"
+        name="searchQuery"
+        autocomplete="off"
+        pattern=".*\S.*"
+        required
+      />
+      <span class="caret"></span>
     </form>
     <div class="gallery">
       <!-- Картки зображень -->

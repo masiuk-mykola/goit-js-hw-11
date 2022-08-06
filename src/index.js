@@ -4,6 +4,8 @@ import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+import InfiniteScroll from 'infinite-scroll';
+
 const refs = {
   form: document.querySelector('.search-form'),
   div: document.querySelector('.gallery'),
@@ -96,20 +98,20 @@ const createGalleryMarkup = data => {
       item =>
         `
     <div class="photo-card">
-    <a href="${item.largeImageURL}">
+    <a class="link" href="${item.largeImageURL}">
       <img src="${item.webformatURL}" alt="${item.tags}" loading="lazy" /></a>
     <div class="info">
-    <p class="info-item">${item.likes}
-      <b>Likes</b>
+    <p class="info-item">
+      <b>Likes </b>${item.likes}
     </p>
-    <p class="info-item">${item.views}
-      <b>Views</b>
+    <p class="info-item">
+      <b>Views </b>${item.views}
     </p>
-    <p class="info-item">${item.comments}
-      <b>Comments</b>
+    <p class="info-item">
+      <b>Comments </b>${item.comments}
     </p>
-    <p class="info-item">${item.downloads}
-      <b>Downloads</b>
+    <p class="info-item">
+      <b>Downloads </b>${item.downloads}
     </p>
   </div>
 </div>
@@ -137,6 +139,12 @@ const scrollBottomHandler = e => {
     photosAPIServise.fetchPhotos().then(data => {
       const markup = createGalleryMarkup(data.hits);
       renderGallery(markup);
+      let currentPage = photosAPIServise.pageNumber;
+      if (currentPage * 40 >= data.totalHits) {
+        Notify.warning(
+          `We're sorry, but you've reached the end of search results.`
+        );
+      }
     });
     gallery.refresh();
     setTimeout(function () {
