@@ -63,18 +63,11 @@ function loadMorePhotos() {
   photosAPIServise.fetchPhotos().then(data => {
     const markup = createGalleryMarkup(data.hits);
     renderGallery(markup);
-    let currentPage = photosAPIServise.pageNumber;
-    if (currentPage * 40 >= data.totalHits) {
-      Notify.warning(
-        `We're sorry, but you've reached the end of search results.`
-      );
-    }
   });
   gallery.refresh();
   setTimeout(function () {
-    const { height: cardHeight } = document
-      .querySelector('.gallery')
-      .firstElementChild.getBoundingClientRect();
+    const { height: cardHeight } =
+      refs.div.firstElementChild.getBoundingClientRect();
 
     window.scrollBy({
       top: cardHeight * 2,

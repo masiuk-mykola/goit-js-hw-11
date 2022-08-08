@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Notify } from 'notiflix';
 
 export default class PhotosAPIServise {
   constructor() {
@@ -8,17 +9,6 @@ export default class PhotosAPIServise {
     this.KEY = '24752012-6c87264ae8b83647fd23322b3';
   }
 
-  // fetchPhotos() {
-  //   return fetch(
-  //     `${this.BASE_URL}?key=${this.KEY}&q=${this.searchQuery}&orientation=horizontal&image_type=photo&safesearch=true&page=${this.page}&per_page=4`
-  //   ).then(response => {
-  //     if (!response.ok) {
-  //       throw new Error(response.status);
-  //     }
-  //     return response.json();
-  //   });
-  // }
-
   async fetchPhotos() {
     try {
       const response = await axios.get(
@@ -27,7 +17,9 @@ export default class PhotosAPIServise {
       const data = await JSON.parse(response.request.response);
       return data;
     } catch (error) {
-      console.error(error);
+      Notify.warning(
+        `We're sorry, but you've reached the end of search results.`
+      );
     }
   }
 
