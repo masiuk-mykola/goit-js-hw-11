@@ -10,6 +10,7 @@ const refs = {
   moreBtn: document.querySelector('.load-more'),
 };
 
+let a;
 const photosAPIServise = new PhotosAPIServise();
 
 const submitHandler = e => {
@@ -18,17 +19,9 @@ const submitHandler = e => {
   setTimeout(smoothScroll, 500);
 };
 let gallery;
-const renderGallery = markup => {
-  refs.div.insertAdjacentHTML('beforeend', markup);
-
-  gallery = new SimpleLightbox('.gallery a', {
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
-  lastPhotoObserver.observe(document.querySelector('.photo-card:last-child'));
-};
 
 const createGalleryMarkup = data => {
+  a = data.length;
   return data
     .map(
       item =>
@@ -56,6 +49,20 @@ const createGalleryMarkup = data => {
     .join('');
 };
 
+const renderGallery = markup => {
+  refs.div.insertAdjacentHTML('beforeend', markup);
+
+  gallery = new SimpleLightbox('.gallery a', {
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
+  lastPhotoObserver.observe(document.querySelector('.photo-card:last-child'));
+  if (a < 40) {
+    lastPhotoObserver.unobserve(
+      document.querySelector('.photo-card:last-child')
+    );
+  }
+};
 refs.form.addEventListener('submit', submitHandler);
 
 function loadMorePhotos() {
